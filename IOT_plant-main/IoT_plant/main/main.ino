@@ -1,13 +1,11 @@
 #include "DHT.h"
 #include "Timer.h"
-//溫溼度監視器
+//溫溼度監測器
 #define DHTPIN 9 
 #define DHTTYPE DHT11
-//#define DHTTYPE DHT22   // DHT 22 如果用的是DHT22，就用這行
-//#define DHTTYPE DHT21   // DHT 21
 DHT dht(DHTPIN, DHTTYPE);
 #define fan   1
-//溫溼度監視器
+//溫溼度監測器
 //濕度監測器
 #define moisture A0
 #define  relay   15
@@ -25,6 +23,7 @@ void setup() {
   pinMode(moisture, INPUT);
   pinMode(relay, OUTPUT);
   pinMode(fan,  OUTPUT);
+  pinMode(pinLightRelay,  OUPUT);
 }
 void D(){
   delay(1000);
@@ -36,10 +35,10 @@ void D(){
   Serial.print(',');
   Serial.print(t);
   if (h>30){
-    digitalWrite(fan, LOW);
+    digitalWrite(fan, HIGH);
   }
   else{
-    digitalWrite(fan, HIGH);
+    digitalWrite(fan, LOW);
   }
 }
 void auto_watering(){
@@ -47,10 +46,11 @@ void auto_watering(){
   Serial.print(',');
   Serial.println(waterLevel);
   if(waterLevel <= 500) {
-    digitalWrite(relay, LOW);
+    digitalWrite(relay, HIGH);
+    delay(60000);
   }
   else {
-    digitalWrite(relay, HIGH);
+    digitalWrite(relay, LOW);
   }
   delay(100);
 }
@@ -60,13 +60,13 @@ void lighting(){
   Serial.println(value, DEC);
   delay(50);
   //遠端控制
-  if(1) { //未完成，要接收訊號
+  if(value<900) { //未完成，要接收訊號
 
     digitalWrite(pinLightRelay, HIGH);
 
     Serial.print("Power on the Light.");
 
-  }else if(2) {//未完成，要接收訊號
+  }else if(value>1200) {//未完成，要接收訊號
 
     digitalWrite(pinLightRelay, LOW);
 
